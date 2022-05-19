@@ -6,9 +6,10 @@ var board =["","","",
 
 
 
+var boxes = document.querySelectorAll(".box");
+console.log(boxes)
 
-  var box= document.getElementById("0");
-  function updateBox(event){
+function updateBox(event){
     var index= event.target.id;
     var i= parseInt(index);
 
@@ -24,10 +25,10 @@ var board =["","","",
       }
 
     }
-
-
 }
-box.addEventListener("click", updateBox,false);
+
+boxes.forEach((box)=>{box.addEventListener("click", updateBox,false)});
+
 
 
 
