@@ -39,7 +39,64 @@ let createF1 =(data,callback)=>{
     }
   })
 }
+let createF2 =(data,callback)=>{
+  console.log('in database save2'+data.address)
+  var queryStr2=`Insert into form2 (address, city,state,zipcode,phonenumber, userId) Values("${data.address}","${data.city}","${data.state}","${data.zipcode}","${data.phonenumber}", (SELECT id FROM user ORDER BY id DESC LIMIT 1))`
 
 
-module.exports.createUser = createUser;
-module.exports.createF1 = createF1;
+   connection.query(queryStr2,(err,result)=>{
+     console.log(queryStr2)
+    if(err){
+      console.log('err inside createF2 '+err)
+      callback(err)
+    }else{
+      console.log('success create F2 in database')
+      callback(null,result)
+
+    }
+  })
+}
+
+
+let createF3 =(data,callback)=>{
+  console.log('in database save3'+data.credit)
+  var queryStr3=`Insert into form3 (credit, expire,cvv,billing, userId) Values("${data.credit}","${data.expire}","${data.cvv}","${data.billing}", (SELECT id FROM user ORDER BY id DESC LIMIT 1))`
+
+
+   connection.query(queryStr3,(err,result)=>{
+     console.log(queryStr3)
+    if(err){
+      console.log('err inside createF3 '+err)
+      callback(err)
+    }else{
+      console.log('success create F3 in database')
+      callback(null,result)
+
+    }
+  })
+}
+
+let display =(callback)=>{
+  var queryStr4 ='Select * from form1 where userId = (SELECT id FROM user ORDER BY id DESC LIMIT 1)'+'Select * from form2 where userId = (SELECT id FROM user ORDER BY id DESC LIMIT 1)'+'Select * from form3 where userId = (SELECT id FROM user ORDER BY id DESC LIMIT 1)'
+
+  connection.query(queryStr4,(err,result)=>{
+    console.log(queryStr4)
+   if(err){
+     console.log('err inside createF3 '+err)
+     callback(err)
+   }else{
+     console.log('success create F3 in database')
+     callback(null,result)
+
+   }
+ })
+
+
+}
+module.exports={
+  createUser,
+  createF1,
+  createF2,
+  createF3
+}
+
