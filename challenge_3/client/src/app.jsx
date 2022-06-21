@@ -251,51 +251,40 @@ class  Purchase extends React.Component{
   constructor(props){
     super(props);
     this.state ={
-    info:{},
+    name:'',
+    email:'',
+
     };
+    this.handleClick = this.handleClick.bind(this);
+
+  }
+  handleClick(event){
+    event.preventDefault();
+    this.props.handleComfirm();
 
   }
 
-
-  componentDidMount (){
-    this.display()
-  }
-
-  display(){
-    axios.get('/user/form')
-    .then( (response)=> {
-      // handle success
-      console.log("inside display response"+response.data.name);
-      this.setState({info:response.data})
-    })
-    .catch(function (error) {
-      // handle error
-      console.log("err inside client display "+error);
-    })
-  }
   render() {
-    console.log('info')
     return(
-  <div>
-    <h2> Confirm Your Information:</h2>
-    {/* <h3>account infomation: </h3>
-    <p> {this.state.info[0].name}</p>
-    <p>email: {this.state.info[0].email}</p>
-    <h3>shipping infomation: </h3>
-    <p> Address: {this.state.info[0].address}</p>
-    <p>City: {this.state.info[0].city}</p>
-    <p>State:{this.state.info[0].state}</p>
-    <p>Zip code: {this.state.info[0].zipcode}</p>
-    <p>Phone number: {this.state.info[0].phonenumber}</p>
-    <h3>billing infomation: </h3>
-    <p>Credit card: {this.state.info[0].credit}</p>
-    <p>Expire date: {this.state.info[0].expire}</p>
-    <p>CVV: {this.state.info[0].cvv}</p>
-    <p>Billing zip code: {this.state.info[0].billing}</p>
-    <button type="button">Confirm</button> */}
-  </div>
-
-  )
+    <div>
+      <h2> Confirm Your Information:</h2>
+      <h3>account infomation: </h3>
+      <p> {this.props.info.name}</p>
+      <p>email: {this.props.info.email}</p>
+      <h3>shipping infomation: </h3>
+     <p> Address: {this.props.info.address}</p>
+     <p>City: {this.props.info.city}</p>
+     <p>State:{this.props.info.state}</p>
+     <p>Zip code: {this.props.info.zipcode}</p>
+     <p>Phone number: {this.props.info.phonenumber}</p>
+     <h3>billing infomation: </h3>
+     <p>Credit card: {this.props.info.credit}</p>
+     <p>Expire date: {this.props.info.expire}</p>
+     <p>CVV: {this.props.info.cvv}</p>
+     <p>Billing zip code: {this.props.info.billing}</p>
+    <button type="button" onClick ={this.props.handleComfirm}>Confirm</button>
+    </div>
+    )
   }
 }
 
@@ -307,16 +296,14 @@ class App extends React.Component {
       f1:false,
       f2:false,
       f3:false,
-      form1Data:{},
       display:false,
-
-      formId:null,
-
+      info:{},
     }
     this.checkOut =this.checkOut.bind(this);
     this.handleF1 = this.handleF1.bind(this);
     this.handleF2 = this.handleF2.bind(this);
     this.handleF3 = this.handleF3.bind(this);
+    this.handleComfirm =this.handleComfirm.bind(this);
 
   }
 
@@ -332,6 +319,21 @@ class App extends React.Component {
       console.log(error);
     });
 
+  }
+  display(){
+    axios.get('/user/form')
+    .then( (response)=> {
+      // handle success
+      console.log("inside display response"+response.data[0].name);
+      // this.setState({name:response.data[0].name})
+      // this.setState({email:response.data[0].email})
+      // this.setState({address:response.data[0].address})
+      this.setState({info: response.data[0]})
+    })
+    .catch(function (error) {
+      // handle error
+      console.log("err inside client display "+error);
+    })
   }
 
 
@@ -387,12 +389,19 @@ class App extends React.Component {
     })
     .then((response)=>{
       console.log(response);
+      this.display();
 
     })
     .catch(function (error) {
       console.log(error);
     });
 
+
+  }
+  handleComfirm(){
+    this.setState({display:false})
+    this.setState({checkout:true})
+    this.setState({info:{}})
 
   }
 
@@ -407,7 +416,7 @@ class App extends React.Component {
       {this.state.f1 && <Form1 handleF1 ={this.handleF1} />}
       {this.state.f2 && <Form2 handleF2 ={this.handleF2} />}
       {this.state.f3 && <Form3 handleF3 ={this.handleF3} />}
-      {this.state.display && <Purchase />}
+       {this.state.display &&<Purchase info={this.state.info} handleComfirm ={this.handleComfirm}/>}
     </div>)
   }
 }
