@@ -104,7 +104,7 @@ class  Form2 extends React.Component {
     data.state =this.state.state;
     data.zipcode =this.state.zipcode;
     data.phonenumber =this.state.phonenumber;
-    console.log('data in F1'+data)
+    console.log('data in F2'+data)
     this.props.handleF2(data)
   }
 
@@ -216,7 +216,7 @@ class  Form3 extends React.Component {
         </label>
         <br />
         <label>
-          city:
+          expire:
           <input
             name="expire"
             type="text"
@@ -247,14 +247,56 @@ class  Form3 extends React.Component {
   }
 }
 
-function Purchase (props){
+class  Purchase extends React.Component{
+  constructor(props){
+    super(props);
+    this.state ={
+    info:{},
+    };
 
-  return(
-    <div>
-    helllo world
-    </div>
+  }
+
+
+  componentDidMount (){
+    this.display()
+  }
+
+  display(){
+    axios.get('/user/form')
+    .then( (response)=> {
+      // handle success
+      console.log("inside display response"+response.data.name);
+      this.setState({info:response.data})
+    })
+    .catch(function (error) {
+      // handle error
+      console.log("err inside client display "+error);
+    })
+  }
+  render() {
+    console.log('info')
+    return(
+  <div>
+    <h2> Confirm Your Information:</h2>
+    {/* <h3>account infomation: </h3>
+    <p> {this.state.info[0].name}</p>
+    <p>email: {this.state.info[0].email}</p>
+    <h3>shipping infomation: </h3>
+    <p> Address: {this.state.info[0].address}</p>
+    <p>City: {this.state.info[0].city}</p>
+    <p>State:{this.state.info[0].state}</p>
+    <p>Zip code: {this.state.info[0].zipcode}</p>
+    <p>Phone number: {this.state.info[0].phonenumber}</p>
+    <h3>billing infomation: </h3>
+    <p>Credit card: {this.state.info[0].credit}</p>
+    <p>Expire date: {this.state.info[0].expire}</p>
+    <p>CVV: {this.state.info[0].cvv}</p>
+    <p>Billing zip code: {this.state.info[0].billing}</p>
+    <button type="button">Confirm</button> */}
+  </div>
 
   )
+  }
 }
 
 class App extends React.Component {
@@ -267,6 +309,8 @@ class App extends React.Component {
       f3:false,
       form1Data:{},
       display:false,
+
+      formId:null,
 
     }
     this.checkOut =this.checkOut.bind(this);
@@ -290,17 +334,21 @@ class App extends React.Component {
 
   }
 
+
+
   handleF1(data){
     this.setState({f1:false})
     this.setState({f2:true})
     console.log('F1 data in APP:  '+data.name);
-    axios.post('/user/id/form1', {
+    axios.post('/user/form1', {
       name:data.name,
       email:data.email,
       password:data.password
     })
-    .then(function (response) {
+    .then((response)=> {
       console.log(response);
+
+
     })
     .catch(function (error) {
       console.log(error);
@@ -312,11 +360,38 @@ class App extends React.Component {
     this.setState({f3:true})
     console.log('F2 data in APP:  '+data.address)
 
+    axios.post('/user/form2', {
+      address:data.address,
+      city:data.city,
+      state:data.state,
+      zipcode:data.zipcode,
+      phonenumber:data.phonenumber,
+    })
+    .then(function (response) {
+      console.log(response);
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+
   }
   handleF3(data){
     this.setState({f3:false})
     this.setState({display:true})
     console.log('F3 data in APP:  '+data.cvv)
+    axios.post('/user/form3', {
+      credit:data.credit,
+      expire:data.expire,
+      cvv:data.cvv,
+      billing:data.billing,
+    })
+    .then((response)=>{
+      console.log(response);
+
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
 
 
   }
@@ -332,7 +407,7 @@ class App extends React.Component {
       {this.state.f1 && <Form1 handleF1 ={this.handleF1} />}
       {this.state.f2 && <Form2 handleF2 ={this.handleF2} />}
       {this.state.f3 && <Form3 handleF3 ={this.handleF3} />}
-      {this.state.display && <Purchase/>}
+      {this.state.display && <Purchase />}
     </div>)
   }
 }
